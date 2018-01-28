@@ -1,5 +1,6 @@
 var app = require('express')();
 var bodyParser = require('body-parser');
+var path = require('path');
 
 var port = process.env.PORT || 7777;
 
@@ -9,8 +10,8 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 
-app.get('/', function (req, res) {
-	res.send('<h1>Hello Node.js</h1>');
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname + '/index.html'));
 });
 
 app.post('/api/cal', function (req, res) {

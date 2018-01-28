@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <center><h1>โปรแกรมคำนวณค่างวดรถต่อเดือน</h1></body><center>
+        <div class="container">
+            <div class="col-sm-6">
+            
+                <div class="form-group">
+                    <label >ราคารถ/บาท</label>
+                    <input type="number" class="form-control" id="carprice">
+                </div>
+                <div class="form-group">
+                    <label>จำนวนเงินดาวน์/บาท</label>
+                    <input type="number" class="form-control" id="cardeposit">
+                </div>
+                <div class="form-group">
+                    <label>จำนวนงวด</label>
+                    <select class="form-control" id="carpay">
+                        <option value="12">12 งวด (1ปี)</option>
+                        <option value="24">24 งวด (2ปี)</option>
+                        <option value="36">36 งวด (3ปี)</option>
+                        <option value="48">48 งวด (4ปี)</option>
+                        <option value="60">60 งวด (5ปี)</option>
+                        <option value="72">72 งวด (6ปี)</option>
+                        <option value="84">84 งวด (7ปี)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ดอกเบี้ย / %ต่อปี</label>
+                    <input type="number" class="form-control" id="carinterest">
+                </div>
+
+                <div class="form-group">
+                    <label>ยอดจัด</label>
+                    <input type="number" class="form-control" id="carrealprice" disabled>
+                </div>
+                <div class="form-group">
+                    <label>ค่างวดต่อเดือน/บาท</label>
+                    <input type="number" class="form-control" id="installment" disabled>
+                </div>
+                <button type="submit" class="btn btn-primary" id="calstart" >คำนวน</button>
+            
+        </div>
+        </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script>
+            $(document).ready(function(){  
+                   // event สำหรับปุ่มคำนวณ
+                  $("#calstart").click( function (){
+                         // ราคารถ
+                         var carprice = $("#carprice").val();
+                         // เงินดาวน์
+                         var cardeposit = $("#cardeposit").val();
+                         // ดอกเบี้ยต่อเดือน
+                         var carinterest = $("#carinterest").val();
+                         // จำนวนงวดที่ผ่อน / เดือน
+                         var carpay = $("#carpay").val();
+                  
+                  
+                         var data = {
+                            "carprice" : parseInt(carprice),
+                            "cardeposit": parseInt(cardeposit),
+                            "carinterest": parseFloat(carinterest),
+                            "carpay": parseFloat(carpay)
+                         }
+
+                         $.ajax({
+                            type: "POST",
+                            url: "/api/cal",
+                            dataType: "json",
+                            data: data,
+                            success: function(result){
+                                $("#carrealprice").val(result.carrealprice);
+                                $("#installment").val(result.installment);
+                            }      
+                        });
+                  });
+            });
+      </script>
+  </body>
+</html>
