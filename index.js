@@ -3,36 +3,31 @@ var bodyParser = require('body-parser');
 var path = require('path');
 
 var port = process.env.PORT || 7777;
+var cors = require("cors")
+var firebase = require('firebase');
+var config = {
+    apiKey: 'AIzaSyDQrZ0d7YIm036NTdrt_MM5fXAS7zw_xsE',
+    authDomain: 'test-64357.firebaseapp.com',
+    databaseURL: 'https://test-64357.firebaseio.com',
+    storageBucket: 'test-64357.appspot.com',
+    messagingSenderId: '696747911221' 
+}
+firebase.initializeApp(config);
 
 // parse application/json
+app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
+var database = firebase.database();
 
-app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/index.html'));
-});
-
-app.post('/api/cal', function (req, res) {
-    
-    let data = req.body
-
-    let carprice = data.carprice //ราคารถ
-    let cardeposit = data.cardeposit //เงินดาวน์
-    let carinterest = data.carinterest //ดอกเบี้ยต่อเดือน
-    let carpay  = data.carpay //จำนวนงวดที่ผ่อน / เดือน
-
-    var carrealprice = carprice - cardeposit //ยอดจัด
-    var carinterestmonth = ((carrealprice * parseFloat(carinterest))/100)/12 //หาดอกเบี้ยต่อเดือนจากราคารถ
-    var carinterestall = carinterestmonth * carpay //หาดอกเบี้ยทั้งหมด ในระยะงวดผ่อน
-    var allprice = carrealprice + carinterestall  //ราคารวมทั้งหมดที่ต้องจ่าย นำราคารถหลักหักดาวร์ + ดอกเบี้ยทั้งปี
-
-    res.send({
-        "carrealprice" : parseInt(carrealprice),
-        "carinterestmonth" : parseFloat(carinterestmonth.toFixed(2)),
-        "installment" : parseFloat((allprice/carpay).toFixed(2))
+app.get('/', async function (req, res) {
+    let province = []
+    await database.ref('highwayvehicles').once('value').then(function(snapshot) {
+        province = snapshot.val()
     })
+    res.send(province)
 });
 
 app.listen(port, function() {
